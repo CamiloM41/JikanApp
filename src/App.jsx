@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Route, Routes,Link } from 'react-router-dom';
 
 //Componentes
-import Coleccion from "./Components/Coleccion/"
-import Favoritos from "./Components/Favoritos/"
-import Info from "./Components/Info/"
-import Inicio from "./Components/Inicio/"
-import Usuario from "./Components/Usuario/"
-import Anime from "./Components/"
-import Top from "./Components/Top/"
-import Manga from "./Components/Manga/"
+import Coleccion from "./Components/Coleccion"
+import Favoritos from "./Components/Favoritos"
+import Info from "./Components/Info"
+import Inicio from "./Components/Inicio"
+import Usuario from "./Components/Usuario"
+import Anime from "./Components/Anime"
+import Top from "./Components/Top"
+import Manga from "./Components/Manga"
 
 import './App.css'
 
