@@ -6,15 +6,36 @@ function Anime(){
     const { name } = useParams(); 
     const [dataAnime, setDataAnime] = useState([]);
 
+    const [favoritos, setFavoritos] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('favoritos') || '[]');
+        } catch {
+            return [];
+        }
+    });
+
+    const esFavorito = favoritos.some(p => p.id === dataAnime.mal_id);
+
     useEffect(() => {
     fetch(`https://api.tenrai.org/v1/anime/${name}`)
       .then(response => response.json())
-      .then(responseData => setDataAnime(responseData.data)) /*Por alguna razon si no pones el .data no muestra nada*/
+      .then(responseData => setDataAnime(responseData.data))
       .catch(error => console.error("Error:", error));
     }, [name]); 
     console.log(dataAnime)
 
     if (!dataAnime || !dataAnime.mal_id) return <p>Cargando...</p>;
+
+    const toggleFavorito = () => {
+        let nuevosFavoritos;
+        if (esFavorito) {
+        nuevosFavoritos = favoritos.filter(p => p.id !== dataAnime.mal_id);
+        } else {
+        nuevosFavoritos = [...favoritos, { id: dataAnime.mal_id, title: dataAnime.title, image:dataAnime.images.jpg.image_url}];
+        }
+        setFavoritos(nuevosFavoritos);
+        localStorage.setItem('favoritos', JSON.stringify(nuevosFavoritos));
+    };
     
     return(
         <div>
@@ -23,9 +44,13 @@ function Anime(){
 
         <img 
             src={dataAnime.images.jpg.image_url} 
-            alt={dataAnime.name} 
+            alt={dataAnime.title}
             width="200"
         />
+
+        <button onClick={toggleFavorito}>
+            {esFavorito ? '❤️' : '🤍'}
+          </button>
 
         <p>Tipo: {dataAnime.type}</p> 
         <p>Fuente: {dataAnime.source}</p> 

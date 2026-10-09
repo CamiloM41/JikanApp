@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import './style.css'
 
@@ -21,23 +21,22 @@ function Inicio(){
             setPagina(pagina-1)
         }
     }
-
-    let resultados =TodoslosAnimes;
-
-    if (busqueda.length >= 3 && isNaN(busqueda)) {
-    resultados = TodoslosAnimes.filter(anime =>
-      anime.title.toLowerCase().includes(busqueda.toLowerCase())
-    );
-    }
+    
     useEffect(() => {
-    fetch(`https://api.tenrai.org/v1/anime?page=${pagina}`)
+        let url=`https://api.tenrai.org/v1/anime?page=${pagina}`;
+
+        if (busqueda.length >= 2 && isNaN(busqueda)) {
+            url += `&q=${encodeURIComponent(busqueda)}`;
+        }
+
+    fetch(url)
       .then(response => response.json())
       .then(responseData => {
         setTodoslosAnimes(responseData.data);
         setTotalPaginas(responseData.pagination.last_visible_page );
       })
       .catch(error => console.error("Error:", error));
-    }, [pagina]); 
+    }, [pagina,busqueda]); 
     console.log(TodoslosAnimes)
 
     if (TodoslosAnimes.length===0){
@@ -45,18 +44,18 @@ function Inicio(){
     }
     return(
         <>
-            inicio
             <input
             type="text"
             placeholder="Buscar anime"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             />
-        {resultados.map((anime) => (
+        {TodoslosAnimes.map((anime) => (
             <div 
+                key ={anime.mal_id}
                 onClick={() => navigate(`/anime/${anime.mal_id}`)}
             >
-                <p key ={anime.mal_id}>
+                <p >
                     {anime.title}</p>
                 <img src={anime.images.jpg.image_url}
                 alt={`Anime ${anime.title}`} width='auto' height='60' loading='lazy'
@@ -69,7 +68,7 @@ function Inicio(){
                 <button onClick={paginaAnterior} disabled={pagina === 1} > 
                     Anterior 
                 </button> 
-                <span> Página {pagina} de {totalPaginas} </span> 
+                <span> Página {pagina}</span> 
                 <button onClick={paginaSiguiente} disabled={pagina === totalPaginas} > 
                     Siguiente 
                 </button>
