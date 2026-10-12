@@ -1,0 +1,455 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.tarot {
+  min-height: 100vh;
+  padding: 45px 20px;
+  color: #f5e9ce;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at top, #38234d 0%, transparent 55%),
+    linear-gradient(145deg, #100c1b, #1d1228 55%, #0c0914);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Encabezado */
+
+.tarot-estrellas {
+  margin-bottom: 12px;
+  color: #d9b66e;
+  font-size: 28px;
+  letter-spacing: 10px;
+}
+
+.tarot-titulo {
+  margin: 0;
+  color: #e7c981;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: 2px;
+  text-shadow: 0 0 25px #b78b4933;
+}
+
+.tarot-descripcion {
+  max-width: 520px;
+  margin: 16px auto 25px;
+  color: #d0bfd9;
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+/* Botones */
+
+.tarot-boton,
+.tarot-repetir {
+  padding: 12px 22px;
+  border: 1px solid #c6a45e;
+  border-radius: 4px;
+  color: #f4dfaa;
+  background: linear-gradient(135deg, #443052, #24172f);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.tarot-boton:hover,
+.tarot-repetir:hover {
+  color: #fff6dc;
+  background: #60436b;
+  box-shadow: 0 0 24px #c6a45e33;
+  transform: translateY(-2px);
+}
+
+.tarot-boton:disabled,
+.tarot-repetir:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+.tarot-error {
+  margin: 22px auto;
+  color: #ffb6bc;
+  font-size: 17px;
+}
+
+.tarot-instruccion {
+  margin: 25px auto 0;
+  color: #e2c37f;
+  font-size: 19px;
+  animation: aparecer 0.5s ease both;
+}
+
+/* Distribución de las cuatro cartas */
+
+.tarot-cartas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 165px));
+  justify-content: center;
+  align-items: start;
+  gap: 20px;
+  width: 100%;
+  max-width: 850px;
+  margin: 38px auto 25px;
+}
+
+/* Contenedor individual */
+
+.tarot-carta {
+  min-width: 0;
+  padding: 10px 8px;
+  border: 1px solid #b99a5c;
+  border-radius: 6px;
+  background: linear-gradient(160deg, #30203f, #171020 75%);
+  box-shadow:
+    0 8px 25px #00000044,
+    inset 0 0 0 3px #c6a45e12;
+  perspective: 1000px;
+  animation: repartir 0.65s ease both;
+  animation-delay: var(--retraso, 0s);
+  transition: box-shadow 0.3s ease;
+}
+
+.tarot-carta:hover {
+  box-shadow:
+    0 12px 30px #00000066,
+    0 0 14px #c6a45e22;
+}
+
+.tarot-numero {
+  display: block;
+  margin-bottom: 10px;
+  color: #e2c37f;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Botón que permite girar la carta */
+
+.tarot-volteador {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4.5;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.2, 0.75, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tarot-volteador.volteada {
+  transform: rotateY(180deg);
+}
+
+.tarot-volteador:focus-visible {
+  outline: 2px solid #e7c981;
+  outline-offset: 4px;
+}
+
+/* Caras frontal y trasera */
+
+.tarot-cara {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #d0ae69;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 3px #d0ae6918;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Reverso de la carta */
+
+.tarot-reverso {
+  justify-content: center;
+  padding: 6px;
+  color: #e7c981;
+  background:
+    radial-gradient(ellipse at center, #48305b 0%, #21142f 65%, #120c1b 100%);
+}
+
+.tarot-reverso-borde {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+  padding: 8px 2px;
+  border: 1px solid #d7b66e;
+  outline: 1px solid #8c6b9b;
+  outline-offset: -6px;
+}
+
+.tarot-reverso-simbolo {
+  font-size: 25px;
+  text-shadow: 0 0 14px #e7c98177;
+}
+
+.tarot-reverso-estrellas {
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.tarot-reverso-centro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55%;
+  aspect-ratio: 1;
+  border: 1px solid #d7b66e;
+  border-radius: 50%;
+  color: #f5d993;
+  font-size: 42px;
+  box-shadow:
+    0 0 18px #d7b66e22,
+    inset 0 0 15px #d7b66e11;
+}
+
+/* Frente revelada */
+
+.tarot-frente {
+  justify-content: flex-start;
+  padding: 8px;
+  color: #f5e9ce;
+  background: linear-gradient(155deg, #33213f, #171020);
+  transform: rotateY(180deg);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #94744a #21142f;
+}
+
+.tarot-frente .tarot-tipo {
+  flex-shrink: 0;
+  margin: 0 0 7px;
+  color: #bfa8d0;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Imagen */
+
+.tarot-frente .tarot-marco {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid #b99a5c;
+  border-radius: 3px;
+  background: radial-gradient(ellipse, #4c3561, #181020 75%);
+}
+
+.tarot-frente .tarot-marco img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tarot-simbolo {
+  color: #e3c47e;
+  font-size: 45px;
+  text-shadow: 0 0 20px #e3c47e55;
+}
+
+/* Nombre y significado */
+
+.tarot-nombre {
+  flex-shrink: 0;
+  margin-top: 8px;
+  color: #f0d69b;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.tarot-frente .tarot-significado {
+  flex-shrink: 0;
+  margin: 6px 0;
+  color: #d5c9dc;
+  font-size: 14px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.tarot-frente .tarot-enlace {
+  flex-shrink: 0;
+  margin: 6px 0;
+  font-size: 12px;
+}
+
+.tarot-enlace a {
+  color: #e5c57d;
+  text-decoration: none;
+}
+
+.tarot-enlace a:hover {
+  text-decoration: underline;
+}
+
+/* Texto debajo de las cartas */
+
+.tarot-ayuda {
+  margin: 9px 0 0;
+  color: #bda8cc;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+
+.tarot-repetir {
+  margin-top: 15px;
+}
+
+.tarot-pie {
+  margin-top: 38px;
+  color: #a995b4;
+  font-size: 15px;
+  letter-spacing: 0.7px;
+}
+
+/* Animaciones */
+
+@keyframes repartir {
+  0% {
+    opacity: 0;
+    transform: translateY(-45px) rotate(-8deg) scale(0.85);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(4px) rotate(1deg) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tabletas */
+
+@media (max-width: 850px) {
+  .tarot {
+    padding: 35px 16px;
+  }
+
+  .tarot-cartas {
+    grid-template-columns: repeat(2, minmax(0, 165px));
+    gap: 18px;
+    max-width: 400px;
+  }
+}
+
+/* Móviles */
+
+@media (max-width: 400px) {
+  .tarot {
+    padding: 30px 12px;
+  }
+
+  .tarot-titulo {
+    font-size: 27px;
+  }
+
+  .tarot-descripcion {
+    font-size: 17px;
+  }
+
+  .tarot-cartas {
+    grid-template-columns: repeat(2, minmax(0, 140px));
+    gap: 12px;
+    max-width: 300px;
+    margin-top: 28px;
+  }
+
+  .tarot-carta {
+    padding: 7px 6px;
+  }
+
+  .tarot-numero {
+    font-size: 10px;
+  }
+
+  .tarot-frente {
+    padding: 6px;
+  }
+
+  .tarot-frente .tarot-significado {
+    font-size: 12px;
+  }
+
+  .tarot-nombre {
+    font-size: 11px;
+  }
+
+  .tarot-reverso-simbolo {
+    font-size: 20px;
+  }
+
+  .tarot-reverso-centro {
+    font-size: 32px;
+  }
+
+  .tarot-pie {
+    font-size: 13px;
+  }
+}
+
+/* Accesibilidad: reducir movimiento */
+
+@media (prefers-reduced-motion: reduce) {
+  .tarot-carta {
+    animation: none;
+  }
+
+  .tarot-volteador {
+    transition-duration: 0.01ms;
+  }
+
+  .tarot-instruccion {
+    animation: none;
+  }
+
+  .tarot-boton,
+  .tarot-repetir {
+    transition: none;
+  }
+}
