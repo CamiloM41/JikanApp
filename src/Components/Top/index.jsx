@@ -7,9 +7,20 @@ import './style.css'
 function Top(){
     const navigate = useNavigate();
     const [pagina, setPagina] = useState(1);
-    const [totalPaginas, setTotalPaginas] = useState([]);
-    const [TodoslosAnimes, setTodoslosAnimes] = useState([]);
-    
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const [resultados, setResultados] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [tipo, setTipo] = useState('anime');
+
+    const tipos = [
+        { valor: 'anime', nombre: 'Anime', endpoint: 'anime', ruta: 'anime' },
+        { valor: 'manga', nombre: 'Manga', endpoint: 'manga', ruta: 'manga' },
+        { valor: 'character', nombre: 'Personajes', endpoint: 'characters', ruta: 'character' },
+        { valor: 'people', nombre: 'Personas', endpoint: 'people', ruta: 'people' }
+    ];
+
+    const tipoActual = tipos.find((t) => t.valor === tipo);
+
     const paginaSiguiente=()=>{
         if (pagina < totalPaginas){
             setPagina(pagina+1)
@@ -23,47 +34,84 @@ function Top(){
     }
     
     useEffect(() => {
-        let url=`https://api.tenrai.org/v1/top/anime?page=${pagina}`;
+        let url=`https://api.tenrai.org/v1/top/${tipoActual.endpoint}?page=${pagina}`;
 
-    fetch(url)
-      .then(response => response.json())
-      .then(responseData => {
-        setTodoslosAnimes(responseData.data);
-        setTotalPaginas(responseData.pagination.last_visible_page );
-      })
-      .catch(error => console.error("Error:", error));
-    }, [pagina]); 
-    console.log(TodoslosAnimes)
+        setCargando(true);
 
-    if (TodoslosAnimes.length===0){
-        return <p>Cargando...</p>
-    }
+        fetch(url)
+          .then(response => response.json())
+          .then(responseData => {
+            setResultados(responseData.data || []);
+            setTotalPaginas(responseData.pagination?.last_visible_page || 1);
+            setCargando(false);
+          })
+          .catch(error => {
+            console.error("Error:", error);
+            setCargando(false);
+          });
+    }, [pagina, tipo]); 
+
     return(
-        <>
-        {TodoslosAnimes.map((anime) => (
-            <div 
-                key ={anime.mal_id}
-                onClick={() => navigate(`/anime/${anime.mal_id}`)}
-            >
-                <p >{anime.title}</p>
-                <img src={anime.images.jpg.image_url}
-                alt={`Anime ${anime.title}`} width='auto' height='60' loading='lazy'
-                />
-                <p>{anime.score}</p>
-            </div>
-            
-        ))}
+        <div className="pagina">
+            <h1 className="titulo-pagina">Top</h1>
 
-            <div>
+            <div className="barra-filtros">
+                <select
+                    value={tipo}
+                    aria-label="Tipo"
+                    onChange={(e) => {
+                        setTipo(e.target.value);
+                        setPagina(1);
+                    }}
+                >
+                    {tipos.map((t) => (
+                        <option key={t.valor} value={t.valor}>
+                            {t.nombre}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            {cargando && <p className="estado">Cargando...</p>}
+
+            {!cargando && resultados.length === 0 && <p className="estado">Sin resultados</p>}
+
+            <div className="rejilla">
+                {resultados.map((item, indice) => {
+                    const titulo = item.title || item.name;
+
+                    return (
+                        <div 
+                            className="tarjeta"
+                            key ={item.mal_id}
+                            onClick={() => navigate(`/${tipoActual.ruta}/${item.mal_id}`)}
+                        >
+                            <span className="tarjeta-rango">
+                                {item.rank ?? (pagina - 1) * 25 + indice + 1}
+                            </span>
+                            <img src={item.images.jpg.image_url}
+                            alt={`${tipoActual.nombre} ${titulo}`} loading='lazy'
+                            />
+                            <p className="tarjeta-titulo">{titulo}</p>
+                            {item.score !== undefined
+                                ? <p className="tarjeta-dato">Puntuación {item.score}</p>
+                                : <p className="tarjeta-dato">Favoritos {item.favorites}</p>
+                            }
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className="paginacion">
                 <button onClick={paginaAnterior} disabled={pagina === 1} > 
                     Anterior 
                 </button> 
-                <span> Página {pagina}</span> 
+                <span>Página {pagina}</span> 
                 <button onClick={paginaSiguiente} disabled={pagina === totalPaginas} > 
                     Siguiente 
                 </button>
             </div>
-        </>
+        </div>
     )
     
 }

@@ -1,0 +1,21 @@
+.tarjeta-rango {
+  position: absolute;
+  top: -12px;
+  left: -10px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 8px;
+  border: 2px solid var(--uva);
+  border-radius: 999px;
+  color: var(--uva);
+  background: var(--lima);
+  font-family: var(--f-titular);
+  font-size: 18px;
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 100;
+  line-height: 1;
+  transform: rotate(-8deg);
+}

@@ -1,31 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './style.css';
 
 function Tarot() {
-  const [cartas, setCartas] = useState([]);
+    const [cartas, setCartas] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('tarotCartas') || '[]');
+    } catch {
+      return [];
+    }
+  });
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
+
+    // Guardar las cartas para que sigan ahí al volver a la pestaña.
+  useEffect(() => {
+    try {
+      localStorage.setItem('tarotCartas', JSON.stringify(cartas));
+    } catch {
+      // Si el almacenamiento falla, se ignora.
+    }
+  }, [cartas]);
 
   const apis = [
     {
       url: 'https://api.tenrai.org/v1/random/anime',
       tipo: 'Anime',
-      posicion: 'Pasado',
+      ruta: 'anime',
     },
     {
       url: 'https://api.tenrai.org/v1/random/manga',
       tipo: 'Manga',
-      posicion: 'Presente',
+      ruta: 'manga',
     },
     {
       url: 'https://api.tenrai.org/v1/random/characters',
       tipo: 'Personaje',
-      posicion: 'Futuro',
+      ruta: 'character',
     },
     {
       url: 'https://api.tenrai.org/v1/random/people',
       tipo: 'Persona',
-      posicion: 'Destino',
+      ruta: 'people',
     },
   ];
 
@@ -70,12 +86,11 @@ function Tarot() {
             datos.description ??
             datos.bio ??
             datos.meaning ??
-            'El destino guarda un mensaje que todavía debes descubrir.';
+            'Su historia sigue siendo un misterio';
 
           return {
             id: `${api.tipo}-${indice}`,
             tipo: api.tipo,
-            posicion: api.posicion,
             nombre:
               typeof nombre === 'string' ? nombre : api.tipo,
             imagen: typeof imagen === 'string' ? imagen : '',
@@ -83,25 +98,13 @@ function Tarot() {
               typeof descripcion === 'string'
                 ? descripcion
                 : 'Una nueva energía llega a tu vida.',
-            enlace: datos.url ?? datos.link ?? '',
+            enlace: datos.mal_id ? `/${api.ruta}/${datos.mal_id}` : '',
             volteada: false,
           };
         })
       );
 
-      // Barajar las cartas antes de repartirlas.
-      const barajadas = [...resultados];
-
-      for (let i = barajadas.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-
-        [barajadas[i], barajadas[j]] = [
-          barajadas[j],
-          barajadas[i],
-        ];
-      }
-
-      setCartas(barajadas);
+      setCartas(resultados);
     } catch (err) {
       console.error('Error al consultar Tenrai API:', err);
       setError('No se pudieron repartir las cartas. Inténtalo de nuevo.');
@@ -123,13 +126,11 @@ function Tarot() {
 
   return (
     <main className="tarot">
-      <div className="tarot-estrellas">✦ · ☾ · ✧</div>
-
-      <h1 className="tarot-titulo">El Tarot del Destino</h1>
+      <h1 className="tarot-titulo">Personajes Misteriosos</h1>
 
       <p className="tarot-descripcion">
-        Concéntrate en tu pregunta, deja que el destino
-        baraje las cartas y descubre lo que te espera.
+        Cuatro cartas ocultas esperan por ti. Descubre
+        qué anime, manga, personaje y persona se esconden detrás.
       </p>
 
       <button
@@ -138,10 +139,10 @@ function Tarot() {
         disabled={cargando}
       >
         {cargando
-          ? '✧ Barajando el destino...'
+          ? 'Repartiendo cartas...'
           : cartas.length
-            ? '✧ Barajar y repartir de nuevo ✧'
-            : '✧ Barajar y repartir las cartas ✧'}
+            ? 'Repartir de nuevo'
+            : 'Repartir las cartas'}
       </button>
 
       {error && <p className="tarot-error">{error}</p>}
@@ -149,8 +150,8 @@ function Tarot() {
       {cartas.length > 0 && (
         <p className="tarot-instruccion">
           {cartas.every((carta) => carta.volteada)
-            ? 'Las cuatro cartas han revelado su destino.'
-            : 'Haz clic en cada carta para revelar su mensaje.'}
+            ? 'Las cuatro cartas han sido reveladas.'
+            : 'Haz clic en cada carta para descubrir quién es.'}
         </p>
       )}
 
@@ -162,7 +163,7 @@ function Tarot() {
             style={{ '--retraso': `${indice * 0.25}s` }}
           >
             <span className="tarot-numero">
-              {carta.posicion}
+              {carta.tipo}
             </span>
 
             <button
@@ -174,27 +175,18 @@ function Tarot() {
               aria-label={
                 carta.volteada
                   ? `Volver a ocultar ${carta.nombre}`
-                  : `Revelar carta de ${carta.posicion}`
+                  : `Revelar carta de ${carta.tipo}`
               }
               aria-pressed={carta.volteada}
             >
               <span className="tarot-cara tarot-reverso">
                 <span className="tarot-reverso-borde">
                   <span className="tarot-reverso-simbolo">☾</span>
-                  <span className="tarot-reverso-estrellas">
-                    ✦　✧　✦
-                  </span>
-                  <span className="tarot-reverso-centro">✧</span>
-                  <span className="tarot-reverso-estrellas">
-                    ✧　✦　✧
-                  </span>
                   <span className="tarot-reverso-simbolo">☼</span>
                 </span>
               </span>
 
               <span className="tarot-cara tarot-frente">
-                <span className="tarot-tipo">{carta.tipo}</span>
-
                 <span className="tarot-marco">
                   {carta.imagen ? (
                     <img
@@ -202,9 +194,7 @@ function Tarot() {
                       alt={carta.nombre}
                       loading="lazy"
                     />
-                  ) : (
-                    <span className="tarot-simbolo">✧</span>
-                  )}
+                  ) : null}
                 </span>
 
                 <span className="tarot-nombre">
@@ -220,21 +210,19 @@ function Tarot() {
                     className="tarot-enlace"
                     onClick={(evento) => evento.stopPropagation()}
                   >
-                    <a
-                      href={carta.enlace}
-                      target="_blank"
-                      rel="noreferrer"
+                    <Link
+                      to={carta.enlace}
                       onClick={(evento) => evento.stopPropagation()}
                     >
-                      Descubrir más ↗
-                    </a>
+                      Descubrir más
+                    </Link>
                   </span>
                 )}
               </span>
             </button>
 
             <p className="tarot-ayuda">
-              {carta.volteada ? '✦ Revelada ✦' : 'Toca para revelar'}
+              {carta.volteada ? 'Revelada' : 'Toca para revelar'}
             </p>
           </article>
         ))}
@@ -251,7 +239,7 @@ function Tarot() {
       )}
 
       <p className="tarot-pie">
-        ✦ El destino se revela a quienes se atreven a mirar ✦
+        Descubre quién se esconde detrás de cada carta
       </p>
     </main>
   );

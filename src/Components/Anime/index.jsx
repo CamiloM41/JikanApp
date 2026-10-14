@@ -24,7 +24,7 @@ function Anime(){
     }, [name]); 
     console.log(dataAnime)
 
-    if (!dataAnime || !dataAnime.mal_id) return <p>Cargando...</p>;
+    if (!dataAnime || !dataAnime.mal_id) return <p className="estado">Cargando...</p>;
 
     const toggleFavorito = () => {
         let nuevosFavoritos;
@@ -38,37 +38,46 @@ function Anime(){
     };
     
     return(
-        <div>
-        <p>{dataAnime.mal_id}</p>
-        <h1>{dataAnime.title}</h1>
+        <div className="detalle">
+            <p className="detalle-id">#{dataAnime.mal_id}</p>
+            <h1 className="detalle-titulo">{dataAnime.title}</h1>
 
-        <img 
-            src={dataAnime.images.jpg.image_url} 
-            alt={dataAnime.title}
-            width="200"
-        />
+            <div className="detalle-cuerpo">
+                <div className="detalle-cabecera">
+                    <img 
+                        src={dataAnime.images.jpg.image_url} 
+                        alt={dataAnime.title}
+                    />
 
-        <button onClick={toggleFavorito}>
-            {esFavorito ? '❤️' : '🤍'}
-          </button>
+                    <button
+                        className="boton-favorito"
+                        onClick={toggleFavorito}
+                        aria-label={esFavorito ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+                    >
+                        {esFavorito ? '❤️' : '🤍'}
+                    </button>
+                </div>
 
-        <p>Tipo: {dataAnime.type}</p> 
-        <p>Fuente: {dataAnime.source}</p> 
-        <p>Episodios: {dataAnime.episodes}</p> 
-        <p>Duración: {dataAnime.duration}</p> 
-        <p>Estado: {dataAnime.status}</p> 
-        <p>Rating: {dataAnime.rating}</p> 
-        <p>Puntuación: {dataAnime.score}</p> 
-        <p>Ranking: {dataAnime.rank}</p> 
-        <p>Año: {dataAnime.year}</p> 
-        <p>Temporada: {dataAnime.season}</p>
-        <p> Géneros:{" "} 
-            {dataAnime.genres.map(genre => genre.name).join(", ")} </p> 
-        <p> Estudios:{" "} 
-            {dataAnime.studios.map(studio => studio.name).join(", ")} </p> 
-        <p>Sinopsis:</p> 
-        <p>{dataAnime.synopsis}</p>
+                <div className="detalle-datos">
+                <p><span>Tipo</span>{dataAnime.type}</p>
+                <p><span>Fuente</span>{dataAnime.source}</p>
+                <p><span>Episodios</span>{dataAnime.episodes}</p>
+                <p><span>Duración</span>{dataAnime.duration}</p>
+                <p><span>Estado</span>{dataAnime.status}</p>
+                <p><span>Rating</span>{dataAnime.rating}</p>
+                <p><span>Puntuación</span>{dataAnime.score}</p>
+                <p><span>Ranking</span>{dataAnime.rank}</p>
+                <p><span>Año</span>{dataAnime.year}</p>
+                <p><span>Temporada</span>{dataAnime.season}</p>
+                <p><span>Géneros</span>{dataAnime.genres.map(genre => genre.name).join(", ")}</p>
+                <p><span>Estudios</span>{dataAnime.studios.map(studio => studio.name).join(", ")}</p>
+                </div>
+            </div>
 
+            <div className="detalle-sinopsis">
+                <h2>Sinopsis</h2>
+                <p>{dataAnime.synopsis}</p>
+            </div>
         </div>
     )
 }

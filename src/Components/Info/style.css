@@ -1,0 +1,102 @@
+.info {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.info-portada {
+  padding: 44px 32px 32px;
+  border: 2px solid var(--uva);
+  background: var(--lima);
+  text-align: center;
+}
+
+.info-titulo {
+  color: var(--uva);
+  font-family: var(--f-titular);
+  font-size: clamp(64px, 16vw, 132px);
+  font-weight: 900;
+  font-variation-settings: 'SOFT' 100, 'opsz' 144;
+  letter-spacing: -0.045em;
+  line-height: 0.85;
+}
+
+.info-autor {
+  margin: 18px 0 0;
+  color: var(--uva);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.info-caja {
+  margin: 28px 0 0;
+  padding: 26px 32px;
+  border-radius: 16px;
+  color: var(--blanco);
+  background: var(--uva);
+  font-size: 20px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.info-caja p {
+  margin: 0;
+}
+
+.info-seccion {
+  margin-top: 48px;
+}
+
+.info-seccion h2 {
+  margin-bottom: 14px;
+  font-family: var(--f-titular);
+  font-size: 28px;
+  font-weight: 800;
+  font-variation-settings: 'SOFT' 100;
+  letter-spacing: -0.02em;
+}
+
+.info-seccion p {
+  margin: 0;
+  max-width: 62ch;
+  line-height: 1.75;
+}
+
+.info-seccion ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.info-seccion li {
+  padding: 11px 0;
+  border-bottom: 1px solid #48376E33;
+}
+
+.info-seccion li:first-child {
+  border-top: 2px solid var(--uva);
+}
+
+.info-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 56px 0 0;
+  padding-top: 20px;
+  border-top: 2px solid var(--uva);
+  font-weight: 600;
+}
+
+.info-pie span {
+  color: var(--uva-medio);
+}
+
+
+.info-eslogan {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--lima);
+}
